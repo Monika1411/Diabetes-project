@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Result | HealMate</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow-lg p-4">
+      <h2 class="text-center mb-4 text-primary">Prediction Result</h2>
+
+      <div class="text-center">
+        <h4>{{ result }}</h4>
+        <p class="text-muted">Estimated Probability: <strong>{{ proba }}%</strong></p>
+      </div>
+
+      <hr>
+
+      <h5 class="text-success">Recommended Diet Plan 🍽️</h5>
+      <ul>
+        {% for item in diet %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+
+      <div class="mt-4 text-center">
+        <a href="/download_pdf/{{ result }}/{{ proba }}" class="btn btn-primary">
+          Download Report as PDF
+        </a>
+        <a href="/" class="btn btn-outline-secondary ms-2">Back</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
