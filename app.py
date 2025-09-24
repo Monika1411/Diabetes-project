@@ -2,8 +2,12 @@ from flask import Flask, render_template, request, send_file
 import joblib
 import numpy as np
 import io
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, A4
 from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+import datetime
 
 app = Flask(__name__)
 
@@ -70,19 +74,72 @@ def index():
     return render_template("index.html")
 
 
+# 📌 Improved PDF route
 @app.route("/download_pdf/<result>/<proba>")
 def download_pdf(result, proba):
     buffer = io.BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    p.setFont("Helvetica", 12)
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
 
-    p.drawString(100, 750, "HealMate - Diabetes Risk Report")
-    p.drawString(100, 720, f"Prediction: {result}")
-    p.drawString(100, 700, f"Risk Probability: {proba}%")
+    # Styles
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "title",
+        parent=styles["Title"],
+        fontSize=18,
+        textColor=colors.darkblue,
+        alignment=1,
+        spaceAfter=20
+    )
+    header_style = ParagraphStyle(
+        "header",
+        parent=styles["Heading2"],
+        textColor=colors.HexColor("#2E86C1"),
+        spaceBefore=10,
+        spaceAfter=10
+    )
+    normal_style = styles["Normal"]
 
-    p.showPage()
-    p.save()
+    # Content
+    elements = []
+    elements.append(Paragraph("HealMate - Diabetes Risk Report", title_style))
+    elements.append(Paragraph(f"Date: {datetime.date.today().strftime('%d-%m-%Y')}", normal_style))
+    elements.append(Spacer(1, 12))
+
+    elements.append(Paragraph("Patient Summary", header_style))
+    elements.append(Paragraph(f"<b>Prediction:</b> {result}", normal_style))
+    elements.append(Paragraph(f"<b>Risk Probability:</b> {proba}%", normal_style))
+    elements.append(Spacer(1, 12))
+
+    elements.append(Paragraph("Recommended Diet Plan 🍽️", header_style))
+
+    diet_data = [
+        ["Meal", "Recommendation"],
+        ["Breakfast", "Oats with skim milk, fruits"],
+        ["Lunch", "Brown rice, grilled chicken/fish, vegetables"],
+        ["Snack", "Sprouts, green tea"],
+        ["Dinner", "Chapati, dal, salad"]
+    ]
+
+    table = Table(diet_data, colWidths=[100, 350])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2E86C1")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("⚠️ Disclaimer: This is an AI-generated risk report and should not replace professional medical advice. Please consult a healthcare provider.", normal_style))
+
+    # Build PDF
+    doc.build(elements)
     buffer.seek(0)
+
     return send_file(buffer, as_attachment=True, download_name="diabetes_report.pdf", mimetype="application/pdf")
 
 
