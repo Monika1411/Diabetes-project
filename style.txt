@@ -169,3 +169,15 @@ body::before {
   .navbar-brand { font-size: 1rem; }
   #chatbot { width: 90%; right: 5%; }
 }
+
+#doctor-robo {
+  position: fixed;
+  bottom: 90px;   /* keeps robo above chatbot */
+  right: 20px;
+  width: 250px;
+  height: 300px;
+  z-index: 1000;  /* make sure it stays visible */
+}
+canvas {
+  border-radius: 12px;
+}
