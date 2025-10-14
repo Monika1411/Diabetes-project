@@ -4,10 +4,28 @@
   <meta charset="utf-8">
   <title>Result | HealMate</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .user-info {
+      background: rgba(37, 99, 235, 0.1);
+      border-left: 4px solid #2563eb;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      color: #1D4ED8;
+    }
+  </style>
 </head>
 <body class="bg-light">
   <div class="container py-5">
     <div class="card shadow-lg p-4">
+      <!-- NEW: Logged-in user info -->
+      {% if user_name and user_email %}
+        <div class="user-info">
+          User Name: <strong>{{ user_name }}</strong> 
+        </div>
+      {% endif %}
+
       <h2 class="text-center mb-4 text-primary">Prediction Result</h2>
 
       <div class="text-center">
