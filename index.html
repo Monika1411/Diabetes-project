@@ -120,6 +120,17 @@
       justify-content: center;
       box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
+
+    /* Logged-in user info */
+    .user-info {
+      background: rgba(37, 99, 235, 0.1);
+      border-left: 4px solid #2563eb;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      font-weight: 500;
+      color: #1D4ED8;
+    }
   </style>
 </head>
 <body>
@@ -136,6 +147,7 @@
           <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
           <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
           <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
         </ul>
       </div>
     </div>
@@ -151,6 +163,13 @@
           <p class="text-muted">Fill in the details below to check your risk.<br>
           <small>⚠️ For informational use only, not a medical diagnosis.</small></p>
         </div>
+
+        <!-- NEW: Logged-in user info -->
+        {% if user_name and user_email %}
+          <div class="user-info">
+            Welcome, <strong>{{ user_name }}</strong>! 
+          </div>
+        {% endif %}
 
         <!-- Form -->
         <form method="POST" action="/">
